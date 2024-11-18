@@ -27,5 +27,6 @@ router.register('rooms', RoomsViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
+   # path('api-interface/', api_interface, name='api_interface'),
 ]
 

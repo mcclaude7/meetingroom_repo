@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Interface</title>
+</head>
+<body>
+    <h1>Room API Interface</h1>
+
+    <!-- Create a Room Form -->
+    <h2>Create a Room</h2>
+    <form id="createRoomForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br>
+        
+        <label for="capacity">Capacity:</label>
+        <input type="number" id="capacity" required><br>
+        
+        <button type="submit">Create Room</button>
+    </form>
+
+    <h2>Rooms List</h2>
+    <button onclick="fetchRooms()">Load Rooms</button>
+    <div id="roomsList"></div>
+
+    <script>
+        // Function to create a new room
+        document.getElementById('createRoomForm').onsubmit = async function(event) {
+            event.preventDefault();
+
+            const roomData = {
+                name: document.getElementById('name').value,
+                capacity: document.getElementById('capacity').value,
+            };
+
+            const response = await fetch('/api/rooms/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(roomData),
+            });
+
+            const data = await response.json();
+            alert(`Room created: ${data.name}`);
+        }
+
+        // Function to fetch and display rooms
+        async function fetchRooms() {
+            const response = await fetch('/api/rooms/');
+            const rooms = await response.json();
+
+            const roomsListDiv = document.getElementById('roomsList');
+            roomsListDiv.innerHTML = '';  // Clear previous list
+
+            rooms.forEach(room => {
+                const roomDiv = document.createElement('div');
+                roomDiv.innerHTML = `Name: ${room.name}, Capacity: ${room.capacity}`;
+                roomsListDiv.appendChild(roomDiv);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -8,11 +8,31 @@ class RoomsSerializer(serializers.ModelSerializer):
 
 class MeetingSerializer(serializers.ModelSerializer):
     room = RoomsSerializer(read_only=True)
-    room_id = serializers.PrimaryKeyRelatedField(queryset=Rooms.objects.all(), source='room')
-    #formatted_duration = serializers.SerializerMethodField()
+    room_id = serializers.PrimaryKeyRelatedField(queryset=Rooms.objects.all(), source='room', write_only=True) #formatted_duration = serializers.SerializerMethodField()
     class Meta:
         model = Meeting
         fields = ['id', 'Title', 'Date', 'start_time', 'Duration', 'room_id', 'room'] 
+        extra_kwargs = {
+            'duration': {'help_text': "Duration of booking in hours"}
+        }
+    def validate(self, data):
+        """
+         Custom validation to check for meeting overlap in the same room.
+        """
+        room = data.get('room')
+        date = data.get('date')
+        start_time = data.get('start_time')
+
+        if room and date and start_time:
+            overlapping_meetings = Meeting.objects.filter(
+                room=room, date=date, start_time=start_time
+            )
+            if overlapping_meetings.exists():
+                raise serializers.ValidationError(
+                    "There is already a meeting scheduled in this room at the specified time."
+                )       
+        return data
+    
        # fields = ['id', 'Title', 'Date', 'start_time', 'Duration', 'room_id', 'room', 'formatted_duration'] 
 
             
