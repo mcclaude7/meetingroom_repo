@@ -17,16 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from meetings.views import MeetingViewSet, RoomsViewSet
+from meetings.views import MeetingViewSet, RoomsViewSet, api_interface
+#from meetings.views import api_interface
+#from meetings. import views
 
 router = DefaultRouter()
 
 router.register('meetings', MeetingViewSet),
 router.register('rooms', RoomsViewSet)
 
+#urlpatterns += router.urls
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-   # path('api-interface/', api_interface, name='api_interface'),
+    path('api-interface/', api_interface, name='api_interface'),
+    # path('api-interface/create-room/', views.create_room, name='create_room'),
+    # path('api-interface/create-meeting/', views.create_meeting, name='create_meeting'),
+
 ]
 
